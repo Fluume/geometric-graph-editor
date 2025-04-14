@@ -2,7 +2,6 @@ import tkinter as tk
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # TODO : expliquer
-from core.graph import Graph
 
 class Canvas:
     """
@@ -10,8 +9,8 @@ class Canvas:
     Elle permet de dessiner des formes géométriques et d'interagir avec elles.
     """
 
-    def __init__(self, root, graph, toolbox):
-        self.toolbox = toolbox  # Instance de la classe Toolbar
+    def __init__(self, root, graph, toolbar):
+        self.toolbar = toolbar  # Instance de la classe Toolbar
         self.graph = graph  # Instance de la classe Graph
         # Frame pour contenir le canvas et son titre
         self.frame = tk.Frame(root)
@@ -33,13 +32,27 @@ class Canvas:
         Affiche le graphe sur le canvas.
         :param graph: Instance de la classe Graph à afficher.
         """
-        print(self.toolbox.get_selected_vertex_index())
+        print(graph)
+        print("Vertices")
+        print(graph.vertices)
+        print("linked points")
+        print(graph.linked_points)
+        
         self.canvas.delete("all")
+        # Displaying edges
+        for edge in graph.linked_points:
+            x1, y1 = edge[0][0], edge[0][1]
+            x2, y2 = edge[1][0], edge[1][1]
+            print("added line")
+            self.canvas.create_line(x1, y1, x2, y2, fill="black")
+        # Displaying vertices
         for i in range(graph.get_length()):
             vertex = graph.get_vertex_by_index(i)
             x, y = vertex[0], vertex[1]
-            color = "blue" if self.toolbox.get_selected_vertex_index() == i else "red"
+            color = "blue" if self.toolbar.get_selected_vertex_index() == i else "red"
             self.canvas.create_oval(x - 5, y - 5, x + 5, y + 5, fill=color)
+        
+
 
     def on_canvas_left_click(self, event):
         """
@@ -47,13 +60,12 @@ class Canvas:
         :param event: Événement de clic de souris.
         """
         x, y = event.x, event.y
-
-        print("Clic gauche détecté")
         # Ajouter un sommet au graphe
+        print(self.graph)
         self.graph.add_vertex((x, y))
 
         self.display_graph(self.graph)
-        self.toolbox.update_vertex_list(self.graph)  # Met à jour la liste des sommets dans la barre d'outils
+        self.toolbar.update_vertex_list(self.graph)  # Met à jour la liste des sommets dans la barre d'outils
     
     def on_canvas_right_click(self, event):
         """
@@ -62,13 +74,12 @@ class Canvas:
         """
         x, y = event.x, event.y
         closest = self.get_closest_vertex(self.graph, (x, y), 10)
-        print("Clic droit détecté")
         # Supprimer un sommet du graphe
         
         if closest: 
             self.graph.remove_vertex(closest)
             self.display_graph(self.graph)
-            self.toolbox.update_vertex_list(self.graph)  # Met à jour la liste des sommets dans la barre d'outils
+            self.toolbar.update_vertex_list(self.graph)  # Met à jour la liste des sommets dans la barre d'outils
 
 
     

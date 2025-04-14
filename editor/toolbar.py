@@ -1,5 +1,12 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # TODO : expliquer
+
+from core.algorithms.unit_disk_graph import UnitDiskGraph
+from core.graph import Graph
 
 class Toolbar:
     """
@@ -31,7 +38,7 @@ class Toolbar:
         # Ajouter des types de graphes à la liste
         self.graph_types = {
             "None" : "Simple display of points",
-            "Unit Disk Graph (Under development)" : "It is a graph with one vertex for each disk in the family, and with an edge between two vertices whenever the corresponding vertices lie within a unit distance of each other.",
+            "Unit Disk Graph" : "It is a graph with one vertex for each disk in the family, and with an edge between two vertices whenever the corresponding vertices lie within a unit distance of each other.",
             "Gabriel Graph (Under development)" : "",
             "Nearest Neighbor Graph (Under development)" : "",
             "Integer Graph (Under development)" : "",
@@ -61,6 +68,8 @@ class Toolbar:
         self.graph_type_description_text.pack(pady=5)
         self.graph_type_description_text.insert(tk.END, self.graph_types[self.selected_graph_type])
         self.graph_type_description_text.config(state="disabled")
+
+        
 
         # Liste des sommets
         self.vertex_label = tk.Label(self.frame, text="Vertices:", background="#d4d4d4")
@@ -110,13 +119,27 @@ class Toolbar:
     def on_graph_type_select(self, event):
         self.selected_graph_type = self.graph_types_combobox.get()
         print(self.selected_graph_type)
+
         # remove graph desc test
-        
         self.graph_type_description_text.config(state="normal")
         self.graph_type_description_text.delete("1.0", tk.END)
         self.graph_type_description_text.insert(tk.END, self.graph_types[self.selected_graph_type])
         self.graph_type_description_text.config(state="disabled")
         print(f"Selected graph type: {self.selected_graph_type}")
+
+        
+        if self.selected_graph_type == "Unit Disk Graph":
+            print("Creating Unit Disk Graph")
+            self.graph = UnitDiskGraph(self.graph)
+            print(self.graph.vertices)
+        else:
+            print("Creating Simple Graph")
+            self.graph = Graph(vertices = self.graph.vertices)  # Créer un graphe simple avec les sommets existants
+            print(self.graph.vertices)
+        
+        self.canvas.graph = self.graph  # Mettre à jour la référence du graphe dans le canvas
+
+        self.canvas.display_graph(self.graph)  # Mettre à jour l'affichage du graphe sur le canvas
 
     def update_vertex_list(self, graph):
         """

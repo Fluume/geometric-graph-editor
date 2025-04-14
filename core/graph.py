@@ -1,6 +1,6 @@
 class Graph:
-    def  __init__(self):
-        self.vertices = [] # Sommets du graphe : un sommet = (x, y)
+    def  __init__(self, vertices = []):
+        self.vertices = vertices # Sommets du graphe : un sommet = (x, y)
         self.linked_points = [] # Arrêtes du graphe ( (point1),(point2) )
     
     def get_length(self):
@@ -10,7 +10,7 @@ class Graph:
         """Retourne le sommet d'un index donné"""
         return self.vertices[index]
 
-    def add_vertex(self, coord):
+    def add_vertex(self, coord : tuple):
         """Ajoute un sommet du graphe"""
         self.vertices.append((coord[0], coord[1]))
     
@@ -25,3 +25,8 @@ class Graph:
     def remove_linked_points(self, point1, point2):
         """Supprime une arrête au graphe"""
         self.linked_points.remove((point1, point2))
+    
+    def distance(self, point1, point2):
+        """Retourne la distance entre deux points"""
+        return ((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2) ** 0.5
+    
