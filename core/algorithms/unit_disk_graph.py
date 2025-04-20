@@ -37,3 +37,11 @@ class UnitDiskGraph(Graph):
                     linked_points.append((self.vertices[i], self.vertices[j]))
 
         return linked_points
+
+    def set_radius(self, radius):
+        """
+        Définit le rayon du graphe.
+        :param radius: Rayon à définir.
+        """
+        self.radius = radius
+        self.linked_points = self.calculate_linked_points() 

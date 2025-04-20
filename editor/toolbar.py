@@ -26,13 +26,16 @@ class Toolbar:
         self.graph = graph  # Instance de la classe Graph
 
         # Titre "Toolbox"
+
         self.label = tk.Label(self.frame, text="Toolbox", font=("Arial", 14), background="#d4d4d4")
-        self.label.pack(side=tk.TOP, pady=5)
+
+        self.settings_label_frame = tk.LabelFrame(self.frame, text="Graph Settings", font=("Arial", 14), background="#d4d4d4")
+        self.settings_label_frame.pack(side=tk.TOP, pady=5, fill="both")
 
         """-------------------ELEMENTS-------------------"""
 
         # Liste des types de graphes
-        self.graph_type_label = tk.Label(self.frame, text="Graph Type:", background="#d4d4d4")
+        self.graph_type_label = tk.Label(self.settings_label_frame, text="Graph Type:", background="#d4d4d4")
         self.graph_type_label.pack(pady=5)
 
         # Ajouter des types de graphes à la liste
@@ -55,27 +58,38 @@ class Toolbar:
             "Demi-Theta6 Graph (Under development)" : "",
         }
 
-        self.graph_types_combobox = ttk.Combobox(self.frame, values = list(self.graph_types.keys()), width=40)
+        self.graph_types_combobox = ttk.Combobox(self.settings_label_frame, values = list(self.graph_types.keys()), width=40)
         self.graph_types_combobox.bind("<<ComboboxSelected>>", self.on_graph_type_select)
         self.graph_types_combobox.current(0)
         self.graph_types_combobox.pack(pady=5)
         
         # Description du type de graphe
-        self.graph_type_description = tk.Label(self.frame, text="Graph Type Description:", background="#d4d4d4")
+        self.graph_type_description = tk.Label(self.settings_label_frame, text="Graph Type Description:", background="#d4d4d4")
         self.graph_type_description.pack(pady=5)
 
-        self.graph_type_description_text = tk.Text(self.frame, height=5, width=40)
+        self.graph_type_description_text = tk.Text(self.settings_label_frame, height=5, width=40)
         self.graph_type_description_text.pack(pady=5)
         self.graph_type_description_text.insert(tk.END, self.graph_types[self.selected_graph_type])
         self.graph_type_description_text.config(state="disabled")
+        
+        """---------------------GRAPH PARTICULARITIES---------------------"""
+        self.graph_type_particularities = tk.Label(self.settings_label_frame, text="Graph Particularities:", background="#d4d4d4")
+        self.graph_type_particularities.pack(pady=5)
 
+        self.particularities_frame = tk.Frame(self.settings_label_frame, background="#d4d4d4")
+        self.particularities_frame.pack(pady=5)
+        self.show_graph_particularities()
+
+        """---------------------------------------------------------------"""
         
 
+        self.management_label_frame = tk.LabelFrame(self.frame, text="Graph Management", font=("Arial", 14), background="#d4d4d4")
+        self.management_label_frame.pack(side=tk.TOP, pady=5, fill="both")
         # Liste des sommets
-        self.vertex_label = tk.Label(self.frame, text="Vertices:", background="#d4d4d4")
+        self.vertex_label = tk.Label(self.management_label_frame, text="Vertices:", background="#d4d4d4")
         self.vertex_label.pack(pady=5)
         
-        self.vertex_listbox = tk.Listbox(self.frame, width=30, height=10)
+        self.vertex_listbox = tk.Listbox(self.management_label_frame, width=30, height=10)
         self.vertex_listbox.pack(pady=5)
         for i in range(graph.get_length()):
             self.vertex_listbox.insert(tk.END, f"{i + 1} | {graph.get_vertex_by_index(i)}")
@@ -83,11 +97,33 @@ class Toolbar:
         self.vertex_listbox.bind("<<ListboxSelect>>", self.on_vertex_select)
 
         # Bouton pour supprimer un sommet
-        self.delete_selected_vertex_button = tk.Button(self.frame, text="Delete Vertex", command=self.delete_selected_vertex)
+        self.delete_selected_vertex_button = tk.Button(self.management_label_frame, text="Delete Vertex", command=self.delete_selected_vertex)
         self.delete_selected_vertex_button.pack(pady=5)
         # Bouton pour tout supprimer
-        self.delete_all_button = tk.Button(self.frame, text="Delete All", command=self.delete_all)
+        self.delete_all_button = tk.Button(self.management_label_frame, text="Delete All", command=self.delete_all)
         self.delete_all_button.pack(pady=5) 
+
+    def show_graph_particularities(self):
+        # Clear Frame
+        for widget in self.particularities_frame.winfo_children():
+            widget.destroy()
+
+        if self.selected_graph_type == "Unit Disk Graph":
+            self.unit_disk_graph_radius = tk.Scale(self.particularities_frame, from_=0, to=200, orient=tk.HORIZONTAL, label="Radius", background="#d4d4d4", command=self.on_radius_change)
+            self.unit_disk_graph_radius.set(10)
+            self.unit_disk_graph_radius.pack(pady=5)
+            self.show_circle = tk.Checkbutton(self.particularities_frame, text="Show Circles", background="#d4d4d4", command = self.on_circle_check)
+            self.show_circle.pack(pady=5)
+
+    def on_circle_check(self):
+        self.canvas.show_circle_unit_disk_graph = not self.canvas.show_circle_unit_disk_graph  # Inverser l'état de l'affichage des cercles
+        print(f"Show circles: {self.canvas.show_circle_unit_disk_graph}")
+        self.canvas.display_graph(self.graph)  # Mettre à jour l'affichage du graphe sur le canvas
+
+    def on_radius_change(self, value):
+        print(f"Radius changed to: {value}")
+        self.graph.set_radius(int(value))  # Mettre à jour le rayon du graphe de disque unitaire
+        self.canvas.display_graph(self.graph)  # Mettre à jour l'affichage du graphe sur le canvas
 
     def delete_all(self):
         """
@@ -136,6 +172,8 @@ class Toolbar:
             print("Creating Simple Graph")
             self.graph = Graph(vertices = self.graph.vertices)  # Créer un graphe simple avec les sommets existants
             print(self.graph.vertices)
+
+        self.show_graph_particularities()  # Afficher les particularités du graphe sélectionné
         
         self.canvas.graph = self.graph  # Mettre à jour la référence du graphe dans le canvas
 

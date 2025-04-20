@@ -16,6 +16,7 @@ class Graph:
     
     def remove_vertex(self, coord):
         """Supprime un sommet du graphe"""
+        print(self.vertices)
         self.vertices.remove((coord[0], coord[1]))
 
     def add_linked_points(self, point1, point2):
