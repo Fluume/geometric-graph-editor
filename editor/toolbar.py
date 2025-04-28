@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import os
 import sys
+from constants import *
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # TODO : expliquer
 
@@ -14,19 +15,19 @@ class Toolbar:
     Elle contient des boutons et d'autres éléments d'interface utilisateur.
     """
 
-    def __init__(self, root, graph):
+    def __init__(self, root, graph, menu):
         self.canvas = None  # Référence au canvas (zone de dessin) dans la fenêtre principale
+        self.menu = menu # Référence au menu de la fenêtre principale
         self.selected_graph_type = "None"  # Type de graphe sélectionné dans la barre d'outils
         # Création d'un panneau (Frame) pour contenir les boutons à droite
         self.frame = tk.Frame(root, background="#d4d4d4", width=400)
         self.frame.pack(side=tk.RIGHT, fill=tk.Y)
         self.frame.pack_propagate(False)
-
+        
         self.selected_vertex_index = None  # Variable pour stocker le sommet sélectionné
         self.graph = graph  # Instance de la classe Graph
 
         # Titre "Toolbox"
-
         self.label = tk.Label(self.frame, text="Toolbox", font=("Arial", 14), background="#d4d4d4")
 
         self.settings_label_frame = tk.LabelFrame(self.frame, text="Graph Settings", font=("Arial", 14), background="#d4d4d4")
@@ -38,27 +39,9 @@ class Toolbar:
         self.graph_type_label = tk.Label(self.settings_label_frame, text="Graph Type:", background="#d4d4d4")
         self.graph_type_label.pack(pady=5)
 
-        # Ajouter des types de graphes à la liste
-        self.graph_types = {
-            "None" : "Simple display of points",
-            "Unit Disk Graph" : "It is a graph with one vertex for each disk in the family, and with an edge between two vertices whenever the corresponding vertices lie within a unit distance of each other.",
-            "Gabriel Graph (Under development)" : "",
-            "Nearest Neighbor Graph (Under development)" : "",
-            "Integer Graph (Under development)" : "",
-            "k closest-neighbors Graph (Under development)" : "",
-            "Minimum Spanning Tree (Under development)" : "",
-            "Relative neighborhood graph (Under development)" : "",
-            "Triangulation of Delaunay (Under development)" : "",
-            "Urquhart graph (Under development)" : "",
-            "Theta Graph (Under development)" : "",
-            "Yao Graph (Under development)" : "",
-            "Yao 4_Linfty (Under development)" : "",
-            "TD-Delaunay graph (Under development)" : "",
-            "L1-Delaunay graph (Under development)" : "",
-            "Demi-Theta6 Graph (Under development)" : "",
-        }
+        
 
-        self.graph_types_combobox = ttk.Combobox(self.settings_label_frame, values = list(self.graph_types.keys()), width=40)
+        self.graph_types_combobox = ttk.Combobox(self.settings_label_frame, values = list(graph_types.keys()), width=40)
         self.graph_types_combobox.bind("<<ComboboxSelected>>", self.on_graph_type_select)
         self.graph_types_combobox.current(0)
         self.graph_types_combobox.pack(pady=5)
@@ -69,7 +52,7 @@ class Toolbar:
 
         self.graph_type_description_text = tk.Text(self.settings_label_frame, height=5, width=40)
         self.graph_type_description_text.pack(pady=5)
-        self.graph_type_description_text.insert(tk.END, self.graph_types[self.selected_graph_type])
+        self.graph_type_description_text.insert(tk.END, graph_types[self.selected_graph_type])
         self.graph_type_description_text.config(state="disabled")
         
         """---------------------GRAPH PARTICULARITIES---------------------"""
@@ -103,6 +86,10 @@ class Toolbar:
         self.delete_all_button = tk.Button(self.management_label_frame, text="Delete All", command=self.delete_all)
         self.delete_all_button.pack(pady=5) 
 
+    def update_radius(self):
+        self.unit_disk_graph_radius.set(self.graph.get_radius())
+
+
     def show_graph_particularities(self):
         # Clear Frame
         for widget in self.particularities_frame.winfo_children():
@@ -110,7 +97,7 @@ class Toolbar:
 
         if self.selected_graph_type == "Unit Disk Graph":
             self.unit_disk_graph_radius = tk.Scale(self.particularities_frame, from_=0, to=200, orient=tk.HORIZONTAL, label="Radius", background="#d4d4d4", command=self.on_radius_change)
-            self.unit_disk_graph_radius.set(10)
+            self.update_radius()  # Set the initial value of the scale to the current radius of the graph
             self.unit_disk_graph_radius.pack(pady=5)
             self.show_circle = tk.Checkbutton(self.particularities_frame, text="Show Circles", background="#d4d4d4", command = self.on_circle_check)
             self.show_circle.pack(pady=5)
@@ -121,7 +108,6 @@ class Toolbar:
         self.canvas.display_graph(self.graph)  # Mettre à jour l'affichage du graphe sur le canvas
 
     def on_radius_change(self, value):
-        print(f"Radius changed to: {value}")
         self.graph.set_radius(int(value))  # Mettre à jour le rayon du graphe de disque unitaire
         self.canvas.display_graph(self.graph)  # Mettre à jour l'affichage du graphe sur le canvas
 
@@ -159,12 +145,12 @@ class Toolbar:
         # remove graph desc test
         self.graph_type_description_text.config(state="normal")
         self.graph_type_description_text.delete("1.0", tk.END)
-        self.graph_type_description_text.insert(tk.END, self.graph_types[self.selected_graph_type])
+        self.graph_type_description_text.insert(tk.END, graph_types[self.selected_graph_type])
         self.graph_type_description_text.config(state="disabled")
         print(f"Selected graph type: {self.selected_graph_type}")
 
         
-        if self.selected_graph_type == "Unit Disk Graph":
+        if self.selected_graph_type == UNIT_DISK_GRAPH:
             print("Creating Unit Disk Graph")
             self.graph = UnitDiskGraph(self.graph)
             print(self.graph.vertices)
@@ -176,8 +162,17 @@ class Toolbar:
         self.show_graph_particularities()  # Afficher les particularités du graphe sélectionné
         
         self.canvas.graph = self.graph  # Mettre à jour la référence du graphe dans le canvas
-
+        self.menu.graph = self.graph  # Mettre à jour la référence du graphe dans le menu
         self.canvas.display_graph(self.graph)  # Mettre à jour l'affichage du graphe sur le canvas
+
+    def select_graph_type(self, graph_type):
+        """
+        Sélectionne le type de graphe dans la barre d'outils.
+        :param graph_type: Type de graphe à sélectionner.
+        """
+        self.selected_graph_type = graph_type
+        self.graph_types_combobox.set(graph_type)
+        self.on_graph_type_select(None)  # Appeler la méthode de sélection de type de graphe pour mettre à jour l'affichage
 
     def update_vertex_list(self, graph):
         """

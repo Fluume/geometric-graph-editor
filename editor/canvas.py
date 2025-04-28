@@ -69,10 +69,18 @@ class Canvas:
         Gère le mouvement de la souris lorsque l'utilisateur fait drag un sommet.
         """
         if self.dragged_vertex:
+            # Assure que le sommet est à l'intérieur du canvas
+            canvas_width = self.canvas.winfo_width()
+            canvas_height = self.canvas.winfo_height()
+
+            x = max(0, min(event.x, canvas_width))
+            y = max(0, min(event.y, canvas_height))
+
             self.graph.remove_vertex(self.dragged_vertex)
-            self.graph.add_vertex((event.x, event.y))
-            self.dragged_vertex = (event.x, event.y)  
-            self.display_graph(self.graph)
+            self.graph.add_vertex((x, y))
+            self.dragged_vertex = (x, y)  
+            self.display_graph(self.graph)# Met à jour la liste des sommets dans la barre d'outils
+
 
     def on_drag_end(self, event):
         """
@@ -81,6 +89,7 @@ class Canvas:
         if self.dragged_vertex:
             print(f"Finished dragging vertex to: ({event.x}, {event.y})")
             self.dragged_vertex = None
+            self.toolbar.update_vertex_list(self.graph)  
 
     def on_canvas_left_click(self, event):
         """

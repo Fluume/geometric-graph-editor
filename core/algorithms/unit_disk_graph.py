@@ -45,3 +45,10 @@ class UnitDiskGraph(Graph):
         """
         self.radius = radius
         self.linked_points = self.calculate_linked_points() 
+
+    def get_radius(self):
+        """
+        Retourne le rayon du graphe.
+        :return: Rayon du graphe.
+        """
+        return self.radius
