@@ -1,7 +1,9 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import messagebox
 import os
 import sys
+import random_graph_generator
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # TODO : expliquer
 
@@ -83,7 +85,92 @@ class Toolbar:
         # Bouton pour tout supprimer
         self.delete_all_button = tk.Button(self.management_label_frame, text="Delete All", command=self.delete_all)
         self.delete_all_button.pack(pady=5) 
+
+        # Génération d'un graphe aléatoire
+        self.generate_random_graph_button = tk.Button(self.management_label_frame, text="Generate Random Graph", command=self.generate_random_graph_click)
+        self.generate_random_graph_button.pack(pady=5)
         """----------------------------------------------------------"""
+
+    def generate_random_graph_click(self):
+        """
+        Ouvre une fenêtre pour définir le random graph.
+        """
+        generate_window = tk.Toplevel()
+        generate_window.title("Generate Random Graph")
+        generate_window.geometry("300x300")
+        generate_window.configure(background="#d4d4d4")
+        generate_window.resizable(False, False)
+
+        # Number of points
+        num_points_frame = tk.Frame(generate_window, background="#d4d4d4")
+        num_points_frame.pack(pady=5, fill=tk.X, anchor="center")
+        self.num_points_label = tk.Label(num_points_frame, text="Number of Points:", background="#d4d4d4")
+        self.num_points_label.pack(side=tk.LEFT, padx=5)
+        self.num_points_scale = tk.Scale(num_points_frame, from_=0, to=1000, orient=tk.HORIZONTAL, background="#d4d4d4",width= 10)
+        self.num_points_scale.pack(side=tk.RIGHT, padx=5)
+        self.num_points_scale.set(100)  # Default value
+
+        # X min
+        x_min_frame = tk.Frame(generate_window, background="#d4d4d4")
+        x_min_frame.pack(pady=5, fill=tk.X, anchor="center")
+        self.x_min_label = tk.Label(x_min_frame, text="X min:", background="#d4d4d4")
+        self.x_min_label.pack(side=tk.LEFT, padx=5)
+        self.x_min_scale = tk.Scale(x_min_frame, from_=0, to=1000, orient=tk.HORIZONTAL, background="#d4d4d4", width= 10)
+        self.x_min_scale.pack(side=tk.RIGHT, padx=5)
+        self.x_min_scale.set(0)  # Default value
+
+        # X max
+        x_max_frame = tk.Frame(generate_window, background="#d4d4d4")
+        x_max_frame.pack(pady=5, fill=tk.X, anchor="center")
+        self.x_max_label = tk.Label(x_max_frame, text="X max:", background="#d4d4d4")
+        self.x_max_label.pack(side=tk.LEFT, padx=5)
+        self.x_max_scale = tk.Scale(x_max_frame, from_=0, to=1000, orient=tk.HORIZONTAL, background="#d4d4d4", width= 10)
+        self.x_max_scale.pack(side=tk.RIGHT, padx=5)
+        self.x_max_scale.set(1000)  # Default value
+
+        # Y min
+        y_min_frame = tk.Frame(generate_window, background="#d4d4d4")
+        y_min_frame.pack(pady=5, fill=tk.X, anchor="center")
+        self.y_min_label = tk.Label(y_min_frame, text="Y min:", background="#d4d4d4")
+        self.y_min_label.pack(side=tk.LEFT, padx=5)
+        self.y_min_scale = tk.Scale(y_min_frame, from_=0, to=1000, orient=tk.HORIZONTAL, background="#d4d4d4", width= 10)
+        self.y_min_scale.pack(side=tk.RIGHT, padx=5)
+        self.y_min_scale.set(0)  # Default value
+
+        # Y max
+        y_max_frame = tk.Frame(generate_window, background="#d4d4d4")
+        y_max_frame.pack(pady=5, fill=tk.X, anchor="center")
+        self.y_max_label = tk.Label(y_max_frame, text="Y max:", background="#d4d4d4")
+        self.y_max_label.pack(side=tk.LEFT, padx=5)
+        self.y_max_scale = tk.Scale(y_max_frame, from_=0, to=1000, orient=tk.HORIZONTAL, background="#d4d4d4", width= 10)
+        self.y_max_scale.pack(side=tk.RIGHT, padx=5)
+        self.y_max_scale.set(1000)  # Default value
+
+        # Generate Button
+        self.generate_button = tk.Button(generate_window, text="Generate", command=self.on_generate_random_graph)
+        self.generate_button.pack(side=tk.LEFT, padx=5)
+        
+
+    def on_generate_random_graph(self):
+        print("Generating random graph")
+        # Vérification des valeurs
+        num_points = self.num_points_scale.get()
+        x_min = self.x_min_scale.get()
+        x_max = self.x_max_scale.get()
+        y_min = self.y_min_scale.get()
+        y_max = self.y_max_scale.get()
+
+        if num_points <= 0 or x_min >= x_max or y_min >= y_max:
+            messagebox.showerror("Error", "Invalid coordinate ranges.")
+            return
+        
+        # Génération du graphe aléatoire
+        new_graph = random_graph_generator.generate_random_graph(num_points, x_min, x_max, y_min, y_max)
+        self.select_graph_type(NONE_GRAPH)  # Sélectionner le type de graphe "Simple Graph"
+        self.graph.vertices = new_graph.vertices  # Mettre à jour le graphe dans la barre d'outils
+        self.canvas.display_graph(self.graph)  # Mettre à jour l'affichage du graphe sur le canvas
+        self.update_vertex_list(self.graph)  # Mettre à jour la liste des sommets dans la barre d'outils
+
 
     def update_radius(self):
         self.unit_disk_graph_radius.set(self.graph.radius)
