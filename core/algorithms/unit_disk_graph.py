@@ -5,24 +5,15 @@ class UnitDiskGraph(Graph):
     Classe représentant un graphe de disque unitaire.
     """
 
-    def __init__(self, base_graph = Graph()):
+    def __init__(self, vertices = []):
         """
         Initialise le graphe avec une liste de sommets.
         :param vertices: Liste de sommets (coordonnées).
         """
-        super().__init__()
-        self.vertices = base_graph.vertices  # Copie des sommets du graphe de base
-        self.linked_points = base_graph.linked_points
+        self.vertices =  vertices # Liste de sommets (coordonnées)
         self.radius = 100
         self.linked_points = self.calculate_linked_points()
-
-    def add_vertex(self, coord: tuple):
-        super().add_vertex(coord)
-        self.linked_points = self.calculate_linked_points()
-
-    def remove_vertex(self, coord):
-        super().remove_vertex(coord)
-        self.linked_points = self.calculate_linked_points()
+        
 
     def calculate_linked_points(self):
         """
@@ -44,11 +35,4 @@ class UnitDiskGraph(Graph):
         :param radius: Rayon à définir.
         """
         self.radius = radius
-        self.linked_points = self.calculate_linked_points() 
-
-    def get_radius(self):
-        """
-        Retourne le rayon du graphe.
-        :return: Rayon du graphe.
-        """
-        return self.radius
+        self.linked_points = self.calculate_linked_points()

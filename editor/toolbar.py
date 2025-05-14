@@ -2,11 +2,12 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import os
 import sys
-from constants import *
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # TODO : expliquer
 
+from core.constants import *
 from core.algorithms.unit_disk_graph import UnitDiskGraph
+from core.algorithms.nearest_neighbor_graph import NearestNeighbourGraph
 from core.graph import Graph
 
 class Toolbar:
@@ -87,7 +88,7 @@ class Toolbar:
         self.delete_all_button.pack(pady=5) 
 
     def update_radius(self):
-        self.unit_disk_graph_radius.set(self.graph.get_radius())
+        self.unit_disk_graph_radius.set(self.graph.radius)
 
 
     def show_graph_particularities(self):
@@ -95,12 +96,14 @@ class Toolbar:
         for widget in self.particularities_frame.winfo_children():
             widget.destroy()
 
-        if self.selected_graph_type == "Unit Disk Graph":
+        # Rien à afficher si le type de graphe est "None"
+        if self.selected_graph_type == UNIT_DISK_GRAPH:
             self.unit_disk_graph_radius = tk.Scale(self.particularities_frame, from_=0, to=200, orient=tk.HORIZONTAL, label="Radius", background="#d4d4d4", command=self.on_radius_change)
             self.update_radius()  # Set the initial value of the scale to the current radius of the graph
             self.unit_disk_graph_radius.pack(pady=5)
             self.show_circle = tk.Checkbutton(self.particularities_frame, text="Show Circles", background="#d4d4d4", command = self.on_circle_check)
             self.show_circle.pack(pady=5)
+        # Rien à afficher si le type de graphe est NEAREST_NEIGHBOR_GRAPH
 
     def on_circle_check(self):
         self.canvas.show_circle_unit_disk_graph = not self.canvas.show_circle_unit_disk_graph  # Inverser l'état de l'affichage des cercles
@@ -152,11 +155,15 @@ class Toolbar:
         
         if self.selected_graph_type == UNIT_DISK_GRAPH:
             print("Creating Unit Disk Graph")
-            self.graph = UnitDiskGraph(self.graph)
+            self.graph = UnitDiskGraph(self.graph.vertices)
             print(self.graph.vertices)
+        elif self.selected_graph_type == NEAREST_NEIGHBOR_GRAPH:
+            print("Creating Nearest Neighbour Graph")
+            self.graph = NearestNeighbourGraph(self.graph.vertices) 
+            print(self.graph.vertices)          
         else:
             print("Creating Simple Graph")
-            self.graph = Graph(vertices = self.graph.vertices)  # Créer un graphe simple avec les sommets existants
+            self.graph = Graph(vertices = self.graph.vertices)
             print(self.graph.vertices)
 
         self.show_graph_particularities()  # Afficher les particularités du graphe sélectionné

@@ -2,9 +2,9 @@ import tkinter as tk
 from tkinter import filedialog as fd
 import os
 import sys
-from constants import *
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # TODO : expliquer
 from core.graph import Graph
+from core.constants import *
 import core.file_manager as file_manager
 
 class GraphMenu:
@@ -75,7 +75,7 @@ class GraphMenu:
             print("Invalid graph type")
             return
         
-        self.graph.vertices = loaded_file['vertices']
+        self.graph.vertices = [(vertex[0], vertex[1]) for vertex in loaded_file['vertices']] # Conversion de liste en tuple
         self.graph.linked_points = loaded_file['linked_points']
         graph_type = loaded_file['graph_type']
         self.toolbar.select_graph_type(loaded_file['graph_type'])
@@ -108,15 +108,7 @@ class GraphMenu:
             print("No file selected")
             return
         
-        encoded_graph = {
-            'vertices': self.graph.vertices,
-            'linked_points': self.graph.linked_points,
-            'graph_type': self.toolbar.selected_graph_type,
-        }
-        if self.toolbar.selected_graph_type == UNIT_DISK_GRAPH:
-            encoded_graph['radius'] = self.graph.radius # Add the radius to the encoded graph
         
-        # Save the graph to the selected file
-        file_manager.save_graph_to_json(filename, encoded_graph)
+        file_manager.save_graph_to_json(filename, graph=self.graph, graph_type=self.toolbar.get_graph_type())
             
 
