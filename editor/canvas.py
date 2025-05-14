@@ -79,6 +79,9 @@ class Canvas:
             self.graph.remove_vertex(self.dragged_vertex)
             self.graph.add_vertex((x, y))
             self.dragged_vertex = (x, y)  
+            self.toolbar.on_vertex_select(event = None, vertex_format = self.graph.vertices.index(self.dragged_vertex))  # Met à jour l'index du sommet sélectionné dans la barre d'outils
+
+            self.toolbar.update_vertex_list(self.graph)  # Met à jour la liste des sommets dans la barre d'outils
             self.display_graph(self.graph)# Met à jour la liste des sommets dans la barre d'outils
 
 
@@ -101,8 +104,8 @@ class Canvas:
         closest = self.get_closest_vertex(self.graph, (x, y), 5) # Vérifie si il y a clic sur un sommet
 
         if closest:
-            print("Closest vertex found, no action taken.")
-            self.dragged_vertex = self.get_closest_vertex(self.graph, (event.x, event.y), 5)
+            self.dragged_vertex = closest
+            self.toolbar.on_vertex_select(event = None, vertex_format = self.graph.vertices.index(closest))  # Met à jour l'index du sommet sélectionné dans la barre d'outils
             if self.dragged_vertex:
                 print(f"Started dragging vertex at: {self.dragged_vertex}")
             

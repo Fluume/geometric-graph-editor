@@ -40,8 +40,6 @@ class Toolbar:
         self.graph_type_label = tk.Label(self.settings_label_frame, text="Graph Type:", background="#d4d4d4")
         self.graph_type_label.pack(pady=5)
 
-        
-
         self.graph_types_combobox = ttk.Combobox(self.settings_label_frame, values = list(graph_types.keys()), width=40)
         self.graph_types_combobox.bind("<<ComboboxSelected>>", self.on_graph_type_select)
         self.graph_types_combobox.current(0)
@@ -51,10 +49,11 @@ class Toolbar:
         self.graph_type_description = tk.Label(self.settings_label_frame, text="Graph Type Description:", background="#d4d4d4")
         self.graph_type_description.pack(pady=5)
 
+        # Zone de texte pour afficher la description du type de graphe
         self.graph_type_description_text = tk.Text(self.settings_label_frame, height=5, width=40)
         self.graph_type_description_text.pack(pady=5)
         self.graph_type_description_text.insert(tk.END, graph_types[self.selected_graph_type])
-        self.graph_type_description_text.config(state="disabled")
+        self.graph_type_description_text.config(state="disabled") # Rendre la zone de texte non modifiable
         
         """---------------------GRAPH PARTICULARITIES---------------------"""
         self.graph_type_particularities = tk.Label(self.settings_label_frame, text="Graph Particularities:", background="#d4d4d4")
@@ -64,9 +63,7 @@ class Toolbar:
         self.particularities_frame.pack(pady=5)
         self.show_graph_particularities()
 
-        """---------------------------------------------------------------"""
-        
-
+        """---------------------GRAPH MANAGEMENT---------------------"""
         self.management_label_frame = tk.LabelFrame(self.frame, text="Graph Management", font=("Arial", 14), background="#d4d4d4")
         self.management_label_frame.pack(side=tk.TOP, pady=5, fill="both")
         # Liste des sommets
@@ -86,6 +83,7 @@ class Toolbar:
         # Bouton pour tout supprimer
         self.delete_all_button = tk.Button(self.management_label_frame, text="Delete All", command=self.delete_all)
         self.delete_all_button.pack(pady=5) 
+        """----------------------------------------------------------"""
 
     def update_radius(self):
         self.unit_disk_graph_radius.set(self.graph.radius)
@@ -129,17 +127,12 @@ class Toolbar:
         """
         Supprime le sommet sélectionné dans la liste et le graphe.
         """
-        selected_vertex = self.vertex_listbox.curselection()
-        if selected_vertex:
-            index = selected_vertex[0]
-            vertex = self.vertex_listbox.get(index)
-            print(f"Deleting vertex: {vertex}")
-            # Supprimer le sommet du graphe
-            self.graph.remove_vertex(self.graph.get_vertex_by_index(index))
-            # Mettre à jour la liste des sommets dans la barre d'outils
-            self.update_vertex_list(self.graph)
-            # Mettre à jour l'affichage du graphe sur le canvas
-            self.canvas.display_graph(self.graph)
+        if self.selected_vertex_index == None: return
+
+        # Supprimer le sommet du graphe
+        self.graph.remove_vertex(self.graph.get_vertex_by_index(self.selected_vertex_index))
+        self.update_vertex_list(self.graph)
+        self.canvas.display_graph(self.graph)
  
     def on_graph_type_select(self, event):
         self.selected_graph_type = self.graph_types_combobox.get()
@@ -190,20 +183,18 @@ class Toolbar:
         for i in range(graph.get_length()):
             self.vertex_listbox.insert(tk.END, f"{i + 1} | {graph.get_vertex_by_index(i)}")
     
-    def on_vertex_select(self, event):
+    def on_vertex_select(self, event, vertex_format = None):
         """
-        Gère l'événement de sélection d'un sommet dans la liste.
+        Gère l'événement de sélection d'un sommet dans la liste ou dans le graph.
         :param event: Événement de sélection.
         """
-        selected_vertex = self.vertex_listbox.curselection()
-        print(f"Selected vertex index: {selected_vertex}")
-        if selected_vertex:
-            index = selected_vertex[0]
-            vertex = self.vertex_listbox.get(index)
-            self.selected_vertex_index = selected_vertex[0]
-            print(f"Selected vertex: {vertex}")
-            # Mettre à jour la couleur du sommet sélectionné dans le canvas
-            self.canvas.display_graph(self.graph)
+        self.selected_vertex_index = self.vertex_listbox.curselection()[0] if vertex_format is None else vertex_format
+        print(f"Selected vertex index: {self.selected_vertex_index}")
+        
+        vertex = self.vertex_listbox.get(self.selected_vertex_index)
+        print(f"Selected vertex: {vertex}")
+        # Mettre à jour la couleur du sommet sélectionné dans le canvas
+        self.canvas.display_graph(self.graph)
 
     def get_selected_vertex_index(self):
         """
