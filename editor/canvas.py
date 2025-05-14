@@ -6,14 +6,15 @@ from core.algorithms.unit_disk_graph import UnitDiskGraph
 
 class Canvas:
     """
-    Classe pour créer un canvas (zone de dessin) dans la fenêtre principale.
-    Elle permet de dessiner des formes géométriques et d'interagir avec elles.
+    Classe pour créer un canvas dans la fenêtre principale.
+    Elle permet de dessiner un graphe à la main avec la souris.
     """
 
     def __init__(self, root, graph, toolbar):
         self.toolbar = toolbar  # Instance de la classe Toolbar
         self.graph = graph  # Instance de la classe Graph
-        # Frame pour contenir le canvas et son titre
+       
+        # Frame pour le canvas et son titre
         self.frame = tk.Frame(root)
         self.frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
@@ -30,9 +31,9 @@ class Canvas:
         self.canvas.bind("<B1-Motion>", self.on_drag_motion)
         self.canvas.bind("<ButtonRelease-1>", self.on_drag_end)
 
-        self.dragged_vertex = None  # Variable pour stocker le sommet en cours de glissement
+        self.dragged_vertex = None  # Variable pour stocker le sommet en cours de drag and drop
 
-        """GRAPH VARIABLES"""
+        """GRAPH DISPLAYING VARIABLES"""
         # Unit Disk Graph
         self.show_circle_unit_disk_graph = False
 
@@ -45,12 +46,12 @@ class Canvas:
         """
         
         self.canvas.delete("all")
-        # Displaying edges
+        # Affichage des arêtes
         for edge in graph.linked_points:
             x1, y1 = edge[0][0], edge[0][1]
             x2, y2 = edge[1][0], edge[1][1]
             self.canvas.create_line(x1, y1, x2, y2, fill="black")
-        # Displaying vertices
+        # Affichage des sommets
         for i in range(graph.get_length()):
             vertex = graph.get_vertex_by_index(i)
             x, y = vertex[0], vertex[1]
@@ -72,17 +73,16 @@ class Canvas:
             # Assure que le sommet est à l'intérieur du canvas
             canvas_width = self.canvas.winfo_width()
             canvas_height = self.canvas.winfo_height()
-
-            x = max(0, min(event.x, canvas_width))
-            y = max(0, min(event.y, canvas_height))
+            x = max(0, min(event.x, canvas_width)) # Limite la position x à l'intérieur du canvas
+            y = max(0, min(event.y, canvas_height)) # Idem pour y
 
             self.graph.remove_vertex(self.dragged_vertex)
             self.graph.add_vertex((x, y))
             self.dragged_vertex = (x, y)  
             self.toolbar.on_vertex_select(event = None, vertex_format = self.graph.vertices.index(self.dragged_vertex))  # Met à jour l'index du sommet sélectionné dans la barre d'outils
 
-            self.toolbar.update_vertex_list(self.graph)  # Met à jour la liste des sommets dans la barre d'outils
-            self.display_graph(self.graph)# Met à jour la liste des sommets dans la barre d'outils
+            self.toolbar.update_vertex_list(self.graph) 
+            self.display_graph(self.graph)
 
 
     def on_drag_end(self, event):
@@ -114,7 +114,7 @@ class Canvas:
             self.graph.add_vertex((x, y))
 
         self.display_graph(self.graph)
-        self.toolbar.update_vertex_list(self.graph)  # Met à jour la liste des sommets dans la barre d'outils
+        self.toolbar.update_vertex_list(self.graph)
     
     def on_canvas_right_click(self, event):
         """
@@ -126,7 +126,7 @@ class Canvas:
         if closest: 
             self.graph.remove_vertex(closest)
             self.display_graph(self.graph)
-            self.toolbar.update_vertex_list(self.graph)  # Met à jour la liste des sommets dans la barre d'outils
+            self.toolbar.update_vertex_list(self.graph)
 
 
     

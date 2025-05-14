@@ -9,7 +9,7 @@ from menu import GraphMenu
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # TODO : expliquer
 from core.graph import Graph
 
-graph = Graph()
+graph = Graph() # Création de l'instance principale de la classe Graph
 """----------------------WINDOW-----------------------"""
 resolution = (1200, 840)
 root = tk.Tk() # Création de la fenêtre racine
@@ -29,4 +29,4 @@ menu.canvas = canvas  # Passer la référence du canvas au menu
 """----------------------GRAPH------------------------"""
 canvas.display_graph(graph)  # Affiche le graphe sur le canvas
 
-root.mainloop()  # Boucle principale pour afficher la fenêtre
+root.mainloop()

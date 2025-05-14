@@ -10,8 +10,8 @@ import core.file_manager as file_manager
 class GraphMenu:
     def __init__(self, root, graph):
         self.graph = graph
-        self.toolbar = None
-        self.canvas = None
+        self.toolbar = None # L'instance de la barre d'outils sera assignée plus tard dans le main.py
+        self.canvas = None # Idem pour le canvas
         menu_bar = tk.Menu(root)
 
         # File menu
@@ -23,16 +23,18 @@ class GraphMenu:
         file_menu.add_command(label="Exit", command=root.quit)
         menu_bar.add_cascade(label="File", menu=file_menu)
 
+        # About menu
+        about_menu = tk.Menu(menu_bar, tearoff=0)
+        about_menu.add_command(label="About", command=self.on_about_click)
+        menu_bar.add_cascade(label="About", menu=about_menu)
+
         """
         # Settings menu
         settings_menu = tk.Menu(menu_bar, tearoff=0)
         settings_menu.add_command(label="Preferences", command=lambda: print("Open Preferences"))
         menu_bar.add_cascade(label="Settings", menu=settings_menu)
 
-        # About menu
-        about_menu = tk.Menu(menu_bar, tearoff=0)
-        about_menu.add_command(label="About", command=lambda: print("About this application"))
-        menu_bar.add_cascade(label="About", menu=about_menu)
+        
 
         # Help menu
         help_menu = tk.Menu(menu_bar, tearoff=0)
@@ -111,4 +113,11 @@ class GraphMenu:
         
         file_manager.save_graph_to_json(filename, graph=self.graph, graph_type=self.toolbar.get_graph_type())
             
+    def on_about_click(self):
+        about_window = tk.Toplevel()
+        about_window.title("About")
+        about_window.geometry("300x200")
+        about_label = tk.Label(about_window, text="Graph Editor\nVersion 1.0\nMade with ❤️ by FERAZZI Tilio and QUENTEL YANN")
+        about_label.pack(pady=20)
+        about_window.configure(bg="pink")
 

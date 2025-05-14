@@ -7,6 +7,7 @@ def save_graph_to_json(file_path, graph, graph_type = NONE_GRAPH):
 
     :param graph: Un dictionnaire représentant le graphe.
     :param file_path: Chemin vers le fichier JSON où le graphe sera sauvegardé.
+    :param graph_type: Type de graphe (par défaut : NONE_GRAPH).
     """
 
     encoded_graph = {
