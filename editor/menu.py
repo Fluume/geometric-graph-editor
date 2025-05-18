@@ -117,7 +117,7 @@ class GraphMenu:
         about_window = tk.Toplevel()
         about_window.title("About")
         about_window.geometry("300x200")
-        about_label = tk.Label(about_window, text="Graph Editor\nVersion 1.0\nMade with ❤️ by FERAZZI Tilio and QUENTEL YANN")
+        about_label = tk.Label(about_window, text="Graph Editor\nVersion 1.0\nMade with ❤️ by FERRAZZI Tilio and QUENTEL YANN")
         about_label.pack(pady=20)
         about_window.configure(bg="pink")
 

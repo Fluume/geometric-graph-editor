@@ -10,6 +10,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) 
 from core.constants import *
 from core.algorithms.unit_disk_graph import UnitDiskGraph
 from core.algorithms.nearest_neighbor_graph import NearestNeighbourGraph
+from core.algorithms.triangulation_of_delaunay import Delaunay_graph
+from core.algorithms.gabriel_graph import GabrielGraph
 from core.graph import Graph
 
 class Toolbar:
@@ -240,7 +242,15 @@ class Toolbar:
         elif self.selected_graph_type == NEAREST_NEIGHBOR_GRAPH:
             print("Creating Nearest Neighbour Graph")
             self.graph = NearestNeighbourGraph(self.graph.vertices) 
-            print(self.graph.vertices)          
+            print(self.graph.vertices)      
+        elif self.selected_graph_type == TRIANGULATION_OF_DELAUNAY_GRAPH:
+            print("Creating Delaunay Graph")
+            self.graph = Delaunay_graph(self.graph.vertices)
+            print(self.graph.vertices)  
+        elif self.selected_graph_type == GABRIEL_GRAPH:
+            print("Creating Gabriel Graph")
+            self.graph = GabrielGraph(self.graph.vertices)
+            print(self.graph.vertices)
         else:
             print("Creating Simple Graph")
             self.graph = Graph(vertices = self.graph.vertices)
