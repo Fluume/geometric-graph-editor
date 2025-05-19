@@ -34,8 +34,9 @@ An open-source geometric graph editor developed as part of a school project. Thi
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/geometric-graph-editor.git
+   git clone https://github.com/fluume/geometric-graph-editor.git
    cd geometric-graph-editor
+   cd editor
 
    ```
 
