@@ -1,4 +1,6 @@
 sujet_projet_files
 sujet_projet.html
 editor/__pycache__
-algorithms/__pycache__
+core/algorithms/__pycache__
+core/__pycache__
+graphs/

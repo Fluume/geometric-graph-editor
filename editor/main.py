@@ -5,8 +5,14 @@ import sys
 from toolbar import Toolbar
 from canvas import Canvas
 from menu import GraphMenu
+
 # importation des modules du core
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # TODO : expliquer
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+"""Explication : 
+    Cette ligne ajoute le répertoire parent du script actuel au chemin de recherche des modules Python.
+    Cela permet d'importer des modules qui se trouvent dans le répertoire parent.
+"""
+
 from core.graph import Graph
 
 graph = Graph() # Création de l'instance principale de la classe Graph

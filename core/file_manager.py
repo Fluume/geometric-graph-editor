@@ -15,8 +15,17 @@ def save_graph_to_json(file_path, graph, graph_type = NONE_GRAPH):
             'linked_points': graph.linked_points,
             'graph_type': graph_type,
         }
+    
+    # Ajout d'attributs spécifiques au type de graphe
     if graph_type == UNIT_DISK_GRAPH:
-        encoded_graph['radius'] = graph.radius # Add the radius to the encoded graph
+        encoded_graph['radius'] = graph.radius 
+    elif graph_type == THETA_GRAPH:
+        encoded_graph['sectors'] = graph.sectors
+        encoded_graph['projection_angle_percent'] = graph.projection_angle_percent
+    elif graph_type == YAO_GRAPH:
+        encoded_graph['sectors'] = graph.sectors
+    elif graph_type == K_CLOSEST_NEIGHBORS_GRAPH:
+        encoded_graph['k'] = graph.k
 
     try:
         with open(file_path, 'w', encoding='utf-8') as file:

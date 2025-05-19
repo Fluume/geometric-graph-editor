@@ -34,7 +34,7 @@ class ThetaGraph(Graph):
                 cone_index = int((angle / (2 * math.pi)) * self.sectors) # Trouve dans quel cone se trouve q
                 cones[cone_index].append(q)
 
-            # Pour chaque cone, trouver le point le plus proche selon la distance projetÃ©e
+            # Pour chaque cone, trouver le point le plus proche selon la droite projetée
             for i in range(self.sectors):
                 min_q = None
                 min_proj_dist = None

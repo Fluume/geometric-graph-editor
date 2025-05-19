@@ -1,9 +1,8 @@
 from core.graph import Graph
-
 class IntegerGraph(Graph):
 
     def __init__(self, vertices = []):
-        self.vertices =  vertices # Liste de sommets (coordonnées)
+        self.vertices =  vertices
         self.linked_points = self.calculate_linked_points()
 
     def is_integer_distance(self, u, v):
@@ -18,3 +17,5 @@ class IntegerGraph(Graph):
                 if self.is_integer_distance(self.vertices[i], self.vertices[j]):
                     linked_points.append((self.vertices[i], self.vertices[j]))
         return linked_points
+
+    

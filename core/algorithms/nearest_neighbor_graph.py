@@ -1,24 +1,12 @@
 from core.graph import Graph
 
 class NearestNeighbourGraph(Graph):
-    """
-    Classe représentant un graphe des k plus proches voisins (k-NN).
-    """
 
     def __init__(self, vertices = []):
-        """
-        Initialise le graphe avec les sommets et le nombre k de voisins.
-        :param base_graph: Graphe de base contenant les sommets.
-        :param k: Nombre de voisins à connecter pour chaque sommet.
-        """
-        self.vertices =  vertices # Liste de sommets (coordonnées)
+        self.vertices =  vertices
         self.linked_points = self.calculate_linked_points()
 
     def calculate_linked_points(self):
-        """
-        Calcule les arêtes du graphe en reliant chaque sommet à ses k plus proches voisins.
-        :return: Liste des arêtes du graphe.
-        """
         linked_points = []
         for point1 in self.vertices:
             # Calculer les distances vers les autres sommets

@@ -4,10 +4,6 @@ from core.graph import Graph
 class YaoGraph(Graph):
 
     def __init__(self, vertices = [], sectors = 6):
-        """
-        :param base_graph: Graphe de base contenant les sommets.
-        :param sectors: Nombre de secteurs (cones) autour de chaque point.
-        """
         self.vertices = vertices
         self.sectors = sectors
         self.linked_points = self.calculate_linked_points()

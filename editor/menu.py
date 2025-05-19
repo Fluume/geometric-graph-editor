@@ -1,14 +1,20 @@
 import tkinter as tk
 from tkinter import filedialog as fd
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # TODO : expliquer
-from core.graph import Graph
+import os, sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) 
+"""Explication : 
+    Cette ligne ajoute le répertoire parent du script actuel au chemin de recherche des modules Python.
+    Cela permet d'importer des modules qui se trouvent dans le répertoire parent.
+"""
+
 from core.constants import *
 import core.file_manager as file_manager
+import graph_generator
 
 class GraphMenu:
     def __init__(self, root, graph):
+        self.root = root
         self.graph = graph
         self.toolbar = None # L'instance de la barre d'outils sera assignée plus tard dans le main.py
         self.canvas = None # Idem pour le canvas
@@ -18,7 +24,8 @@ class GraphMenu:
         file_menu = tk.Menu(menu_bar, tearoff=0)
         file_menu.add_command(label="New graph", command=self.new_graph_click)
         file_menu.add_command(label="Open graph", command=self.open_graph_click)
-        file_menu.add_command(label="Save graph as", command=self.save_graph_click)
+        file_menu.add_command(label="Save graph as file", command=self.save_graph_file_click)
+        file_menu.add_command(label="Save graph as image", command=self.save_graph_image_click)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=root.quit)
         menu_bar.add_cascade(label="File", menu=file_menu)
@@ -28,26 +35,9 @@ class GraphMenu:
         about_menu.add_command(label="About", command=self.on_about_click)
         menu_bar.add_cascade(label="About", menu=about_menu)
 
-        """
-        # Settings menu
-        settings_menu = tk.Menu(menu_bar, tearoff=0)
-        settings_menu.add_command(label="Preferences", command=lambda: print("Open Preferences"))
-        menu_bar.add_cascade(label="Settings", menu=settings_menu)
-
-        
-
-        # Help menu
-        help_menu = tk.Menu(menu_bar, tearoff=0)
-        help_menu.add_command(label="Documentation", command=lambda: print("Open Documentation"))
-        help_menu.add_command(label="FAQ", command=lambda: print("Open FAQ"))
-        menu_bar.add_cascade(label="Help", menu=help_menu)
-        """
-
-        # Attach the menu bar to the root window
-        root.config(menu=menu_bar)
+        root.config(menu = menu_bar)
 
     def new_graph_click(self):
-        print("New graph clicked")
         self.toolbar.delete_all()
         self.toolbar.select_graph_type(NONE_GRAPH)
 
@@ -56,23 +46,24 @@ class GraphMenu:
             ('Graph files', '*.json'),
         )
 
-        filename = fd.askopenfilename(title='Open a file', initialdir='/', filetypes=filetypes)
+        filename = fd.askopenfilename(title='Open a file', initialdir='../graphs/', filetypes=filetypes)
 
         if not filename:
             print("No file selected")
             return
-        # Load the graph from the selected file
+        
+        # Charger le fichier JSON
         loaded_file = file_manager.load_graph_from_json(filename)
         if not loaded_file:
             print("Empty file")
             return
         
-        # Verify the loaded file structure
+        # Vérifier le format du fichier
         if 'vertices' not in loaded_file or 'linked_points' not in loaded_file or 'graph_type' not in loaded_file:
             print("Invalid file format")
             return
         
-        # Verify the graph type
+        # Vérifier le type de graphe
         if loaded_file['graph_type'] not in graph_types:
             print("Invalid graph type")
             return
@@ -88,9 +79,9 @@ class GraphMenu:
                 print("Invalid radius value: radius must be a positive integer")
                 return
             self.graph.set_radius(radius)
-            self.toolbar.update_radius()  # Update the radius in the toolbar
+            self.toolbar.update_radius() 
         elif graph_type == NONE_GRAPH:
-            self.graph.linked_points = []  # Clear linked points for a simple graph
+            self.graph.linked_points = []
         else:
             print("Invalid graph type")
             return
@@ -98,21 +89,35 @@ class GraphMenu:
         self.toolbar.update_vertex_list(self.graph)
         self.canvas.display_graph(self.graph)
     
-    def save_graph_click(self):
+    def save_graph_file_click(self):
         print("Save graph clicked")
-        filetypes = (
-            ('Graph files', '*.json'),
-        )
+        filetypes = (('Graph files', '*.json'),)
 
-        filename = fd.asksaveasfilename(title='Save a file', initialdir='/', defaultextension=".json", filetypes=filetypes)
+        filename = fd.asksaveasfilename(title='Save a graph', initialdir='../graphs/', defaultextension=".json", filetypes=filetypes)
 
         if not filename:
             print("No file selected")
             return
         
         
-        file_manager.save_graph_to_json(filename, graph=self.graph, graph_type=self.toolbar.get_graph_type())
+        file_manager.save_graph_to_json(filename, graph=self.graph, graph_type=self.toolbar.selected_graph_type)
             
+    def save_graph_image_click(self):
+        filetypes = (('PNG files', '*.png'),)
+        filename = fd.asksaveasfilename(title='Save a graph', initialdir='../graphs/', defaultextension=".json", filetypes=filetypes)
+
+        if not filename:
+            print("No file selected")
+            return
+
+        image = graph_generator.get_graph_image(self.graph)
+        image.save(filename)
+        
+        print(f"Graph saved as image to {filename}")
+        
+        
+
+
     def on_about_click(self):
         about_window = tk.Toplevel()
         about_window.title("About")
