@@ -39,11 +39,6 @@ An open-source geometric graph editor developed as part of a school project. Thi
 
    ```
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
 ## Usage
 
 Run the application:
@@ -51,10 +46,3 @@ Run the application:
 ```bash
 python main.py
 ```
-
-## File Format
-
-Graphs can be saved and loaded in a custom format. The format includes:
-
-- Vertex coordinates.
-- Graph type and parameters.
